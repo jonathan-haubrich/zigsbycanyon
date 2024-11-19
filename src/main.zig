@@ -11,7 +11,7 @@ pub fn main() !void {
 
     try client.connect();
 
-    var shell = _shell.RemoteShell.init(client);
+    var shell = try _shell.RemoteShell.init(client);
 
     std.debug.print("Entering prompt loop\n", .{});
     try shell.prompt_loop();
