@@ -7,7 +7,7 @@ const win = std.os.windows;
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
-    var client = try _client.Client.init("172.20.42.248", 4444, allocator);
+    var client = try _client.Client.init("192.168.237.129", 4444, allocator);
 
     try client.connect();
 

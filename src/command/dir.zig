@@ -1,8 +1,15 @@
 const std = @import("std");
 const shell = @import("../shell/shell.zig");
 
-pub fn dir(self: *shell.RemoteShell, path: []const u8) ![]const u8 {
+pub fn dir(self: *shell.RemoteShell, args: std.ArrayList([]const u8)) ![]const u8 {
     var entries = std.ArrayList(u8).init(self.client.allocator);
+
+    if (args.items.len < 1) {
+        _ = try entries.writer().write("[ERROR:dir] Usage: (ls|dir) <path>\n");
+        return entries.items;
+    }
+
+    const path = args.items[0];
 
     const current = std.fs.cwd();
     var target_buffer: [std.fs.max_path_bytes]u8 = undefined;
@@ -45,7 +52,7 @@ pub fn dir(self: *shell.RemoteShell, path: []const u8) ![]const u8 {
                     continue;
                 },
                 else => {
-                    try std.fmt.format(entries.writer(), "{d} ", .{file_stat.size});
+                    try std.fmt.format(entries.writer(), "{} ", .{std.fmt.fmtIntSizeDec(file_stat.size)});
                     try std.fmt.format(entries.writer(), "{d}|{d}|{d} ", .{ file_stat.atime, file_stat.mode, file_stat.ctime });
                 },
             }
